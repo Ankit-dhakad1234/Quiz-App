@@ -72,6 +72,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on port: ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`✅ Server is running on port: ${PORT}`);
+// });
+export default app;
