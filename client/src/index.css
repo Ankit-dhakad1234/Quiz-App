@@ -28,14 +28,15 @@ body.dark-mode {
   --card-bg: rgba(40, 37, 78, 0.5);
   --primary-text: #F0F4F8;
   --secondary-text: #A4C6F5;
-  --accent-color:  #F0F4F8;
-  --accent-hover: #3E3B5B;  /* <-- THIS IS THE CORRECTED LINE */
+  --accent-color: #F0F4F8;
+  --accent-hover: #3E3B5B;
   --card-border: rgba(164, 198, 245, 0.3);
 
-  
+  /* Overrides for smooth transition */
+  background: none;
+  animation: none;
+  background-color: var(--primary-bg-end);
 }
-
-
 
 /* --- 3. Global Styles --- */
 body {
@@ -43,10 +44,13 @@ body {
   font-family: var(--font-body);
   color: var(--primary-text);
   
-  /* Animated Gradient Background */
+  /* Animated Gradient Background for Light Mode */
   background: linear-gradient(-45deg, var(--primary-bg-start), var(--primary-bg-end), #A4C6F5, #85A4E8);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
+
+  /* This enables the smooth background color transition */
+  transition: background-color 0.5s ease-in-out;
 
   display: flex;
   justify-content: center;
@@ -376,4 +380,77 @@ p {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+/* --- 11. Dark Mode Specific Overrides --- */
+body.dark-mode .topic-btn {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--primary-text); 
+  border-color: var(--card-border);
+}
+
+body.dark-mode .topic-btn:hover {
+  background-color: var(--card-bg); 
+  color: white; 
+  border-color: var(--accent-color);
+}
+
+body.dark-mode .score-circle {
+  background: var(--card-bg);
+  color: var(--primary-text);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+
+body.dark-mode .option-button {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--primary-text);
+  border-color: var(--card-border);
+}
+
+body.dark-mode .option-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-color);
+}
+
+body.dark-mode .btn {
+  background-color: var(--accent-hover);
+  color: var(--primary-text);
+  border: 2px solid var(--accent-color);
+}
+
+body.dark-mode .btn:hover {
+  background-color: var(--accent-color);
+  color: var(--primary-bg-end); /* Dark text on hover */
+}
+
+body.dark-mode .btn-secondary {
+  background-color: transparent;
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+body.dark-mode .btn-secondary:hover {
+  background-color: var(--accent-color);
+  color: var(--primary-bg-end); /* Dark text on hover */
+}
+
+/* Force correct/incorrect colors to have priority in dark mode */
+body.dark-mode .option-button.correct,
+body.dark-mode .option-button.correct:hover {
+  background-color: #10B981; /* Green */
+  color: white;
+  border-color: #059669;
+  opacity: 1;
+}
+
+body.dark-mode .option-button.incorrect,
+body.dark-mode .option-button.incorrect:hover {
+  background-color: #EF4444; /* Red */
+  color: white;
+  border-color: #DC2626;
+  opacity: 1;
+}
+
+body.dark-mode .option-button.disabled {
+  opacity: 0.5;
 }

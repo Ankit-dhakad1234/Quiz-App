@@ -71,9 +71,9 @@ const ResultsScreen = () => {
         <button className="btn btn-secondary" onClick={() => dispatch({ type: 'RESET_QUIZ' })}>
           Back to Topics
         </button>
-        <button className="btn" onClick={() => dispatch({ type: 'RESET_QUIZ' })}>
+        {/* <button className="btn" onClick={() => dispatch({ type: 'RESET_QUIZ' })}>
           Play Again
-        </button>
+        </button> */}
       </div>
     </div>
   );

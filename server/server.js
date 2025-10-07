@@ -15,31 +15,24 @@ const API_KEY = process.env.GEMINI_API_KEY;
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-// ✅ Route to test API connection
-app.get("/test", async (req, res) => {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent("Say 'Gemini API connected successfully!'");
-    res.json({ message: result.response.text() });
-  } catch (error) {
-    console.error("Gemini API Test Error:", error);
-    res.status(500).json({ error: "Gemini API test failed. Check your key or model name." });
-  }
-});
 
-// ✅ Main generation route
 app.post("/api/generate", async (req, res) => {
   try {
     const { type, payload } = req.body;
 
-    // Use Gemini 1.5 Flash (fast and suitable for quizzes)
-// CORRECT
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    // --- NEW: Define a generation configuration with higher temperature ---
+    const generationConfig = {
+      temperature: 0.9, // Increase randomness (0.0 to 1.0)
+    };
+
     let prompt = "";
 
     if (type === "quiz") {
       const { topic } = payload;
-      prompt = `You are a helpful quiz generator. Create 5 multiple-choice questions on the topic "${topic}". 
+      // --- UPDATED: Slightly stronger wording in the prompt ---
+      prompt = `You are a helpful quiz generator. Your task is to generate a new and unique set of 5 multiple-choice questions on the topic "${topic}".
       Return ONLY valid JSON array format:
       [
         {"question": "", "options": ["A","B","C","D"], "correctAnswer": ""}
@@ -54,12 +47,11 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
       return res.status(400).json({ error: "Invalid request type" });
     }
 
-    // Call Gemini
-    const result = await model.generateContent(prompt);
+    // --- UPDATED: Call Gemini with the new generationConfig ---
+    const result = await model.generateContent(prompt, generationConfig);
     const text = result.response.text();
 
     if (type === "quiz") {
-      // Remove code block formatting if Gemini adds it
       const cleanText = text.replace(/```json|```/g, "").trim();
       const quizData = JSON.parse(cleanText);
       res.json(quizData);
@@ -72,7 +64,8 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   }
 });
 
-// app.listen(PORT, () => {
-//   console.log(`✅ Server is running on port: ${PORT}`);
-// });
+app.listen(PORT, () => {
+  console.log(`✅ Server is running on port: ${PORT}`);
+});
+
 export default app;
