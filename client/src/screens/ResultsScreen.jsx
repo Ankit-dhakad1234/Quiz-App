@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useQuiz } from '../hooks/useQuiz';
 import { fetchFeedback } from "../services/QuizServices.js";
 import Loader from '../components/Loader';
+import { Navigate } from 'react-router-dom';
+import TopicScreen from './TopicScreen.jsx';
 
 const ResultsScreen = () => {
   const { quizState, dispatch } = useQuiz();
@@ -46,9 +48,15 @@ const ResultsScreen = () => {
         )}
       </div>
 
-      <button className="btn" onClick={() => dispatch({ type: 'RESET_QUIZ' })}>
-        Play Again
-      </button>
+      <div className="results-actions">
+        <button className="btn btn-secondary" onClick={() => dispatch({ type: 'RESET_QUIZ' })}>
+          Back to Topics
+        </button>
+        <button className="btn" onClick={() => dispatch({ type: 'RESET_QUIZ' })}>
+          Play Again
+        </button>
+      </div>
+      
     </div>
   );
 };
