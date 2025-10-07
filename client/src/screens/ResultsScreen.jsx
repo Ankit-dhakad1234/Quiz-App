@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import Confetti from 'react-confetti'; // --- NEW: Import confetti ---
 import { useQuiz } from '../hooks/useQuiz';
-import { fetchFeedback } from "../services/QuizServices.js";
+import { fetchFeedback } from '../services/QuizServices.js';
 import Loader from '../components/Loader';
-import { Navigate } from 'react-router-dom';
-import TopicScreen from './TopicScreen.jsx';
+
+
+
+// import React, { useEffect, useState } from 'react';
+// import Confetti from 'react-confetti';
+// import { useQuiz } from '../hooks/useQuiz';
+// import { fetchFeedback } from '../services/QuizService';
+// import Loader from '../components/Loader';
 
 const ResultsScreen = () => {
   const { quizState, dispatch } = useQuiz();
@@ -12,18 +19,25 @@ const ResultsScreen = () => {
   const [loadingFeedback, setLoadingFeedback] = useState(true);
 
   useEffect(() => {
-    const getFeedback = async () => {
-      try {
-        setLoadingFeedback(true);
-        const aiFeedback = await fetchFeedback(topic, score);
-        setFeedback(aiFeedback);
-      } catch (error) {
-        setFeedback("We couldn't generate feedback, but great job on completing the quiz!");
-      } finally {
-        setLoadingFeedback(false);
-      }
-    };
     if (topic && score !== null) {
+      // Save high score to localStorage
+      const currentHighScore = localStorage.getItem(`highScore_${topic}`) || 0;
+      if (score > currentHighScore) {
+        localStorage.setItem(`highScore_${topic}`, score);
+      }
+
+      // Fetch AI feedback
+      const getFeedback = async () => {
+        try {
+          setLoadingFeedback(true);
+          const aiFeedback = await fetchFeedback(topic, score);
+          setFeedback(aiFeedback);
+        } catch (error) {
+          setFeedback("We couldn't generate feedback, but great job on completing the quiz!");
+        } finally {
+          setLoadingFeedback(false);
+        }
+      };
       getFeedback();
     }
   }, [score, topic]);
@@ -32,11 +46,16 @@ const ResultsScreen = () => {
 
   return (
     <div className="results-container">
+      {/* Show confetti on perfect score */}
+      {score === questions.length && <Confetti />}
+      
       <h2>Quiz Complete!</h2>
-      <p className="score-text">You scored</p>
+      <p>You scored</p>
+      
       <div className="score-circle">
         {score} / {questions.length}
       </div>
+      
       <p className="percentage">({percentage}%)</p>
       
       <div className="feedback-box">
@@ -56,7 +75,6 @@ const ResultsScreen = () => {
           Play Again
         </button>
       </div>
-      
     </div>
   );
 };

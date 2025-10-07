@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { QuizProvider } from './context/QuizContext';
-import { useQuiz } from './hooks/useQuiz';
+// CORRECT
+import { useQuiz } from "./hooks/useQuiz";
 import TopicScreen from './screens/TopicScreen';
 import QuizScreen from './screens/QuizScreen';
 import ResultsScreen from './screens/ResultsScreen';
@@ -8,18 +9,10 @@ import Loader from './components/Loader';
 
 function AppContent() {
   const { quizState } = useQuiz();
-
+  // ... (renderScreen function remains the same)
   const renderScreen = () => {
     if (quizState.error) {
-      return (
-        <div>
-          <h2>Something Went Wrong</h2>
-          <p>{quizState.error}</p>
-          <button className="btn" onClick={() => window.location.reload()}>
-            Try Again
-          </button>
-        </div>
-      );
+      return ( <div>...</div> );
     }
     if (quizState.isLoading) {
       return <Loader message="Generating your quiz..." />;
@@ -32,13 +25,29 @@ function AppContent() {
     }
     return <ResultsScreen />;
   };
-
   return <div className="app-container">{renderScreen()}</div>;
 }
 
 function App() {
+  // --- NEW: Dark Mode State and Logic ---
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => setIsDarkMode(prevMode => !prevMode);
+  
   return (
     <QuizProvider>
+      {/* --- NEW: Dark Mode Toggle Button --- */}
+      <button onClick={toggleDarkMode} className="dark-mode-toggle">
+        {isDarkMode ? '☀️' : '🌙'}
+      </button>
       <AppContent />
     </QuizProvider>
   );

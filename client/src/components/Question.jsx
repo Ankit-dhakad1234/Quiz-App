@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Question = ({ questionData, userAnswer, onSelectAnswer }) => {
+const Question = ({ questionData, userAnswer, onSelectAnswer, isAnswered }) => {
   return (
     <div className="question-container">
       <h2
@@ -8,14 +8,30 @@ const Question = ({ questionData, userAnswer, onSelectAnswer }) => {
         dangerouslySetInnerHTML={{ __html: questionData.question }}
       />
       <div className="options-grid">
-        {questionData.options.map((option, index) => (
-          <button
-            key={index}
-            className={`option-button ${userAnswer === option ? 'selected' : ''}`}
-            onClick={() => onSelectAnswer(option)}
-            dangerouslySetInnerHTML={{ __html: option }}
-          />
-        ))}
+        {questionData.options.map((option, index) => {
+          
+          // --- NEW: Logic to determine button style ---
+          let buttonClass = 'option-button';
+          if (isAnswered) {
+            if (option === questionData.correctAnswer) {
+              buttonClass += ' correct'; // Always show correct answer in green
+            } else if (option === userAnswer) {
+              buttonClass += ' incorrect'; // Show user's wrong answer in red
+            } else {
+              buttonClass += ' disabled'; // Disable other options
+            }
+          }
+
+          return (
+            <button
+              key={index}
+              className={buttonClass}
+              onClick={() => onSelectAnswer(option)}
+              disabled={isAnswered} // Disable button after answering
+              dangerouslySetInnerHTML={{ __html: option }}
+            />
+          );
+        })}
       </div>
     </div>
   );
